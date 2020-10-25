@@ -17,7 +17,11 @@
           <el-menu
             background-color="#2E2E2E"
             text-color="#fff"
-            active-text-color="#ccc" unique-opened :collapse="isCollapse" :collapse-transition="false">
+            active-text-color="#ccc"
+            unique-opened
+            :collapse="isCollapse"
+            :collapse-transition="false"
+            router>
             <!--1级菜单-->
             <el-submenu :index="menu.id + ''" v-for="menu in menuList" :key="menu.id">
               <!--1级菜单的模板-->
@@ -25,7 +29,7 @@
                   <i :class="menu.icon"></i><span>{{menu.menuName}}</span>
                 </template>
                 <!--2级菜单-->
-                <el-menu-item :index="menu.id + '-' + submenu.id + ''" v-for="submenu in menu.children" :key="submenu.id">
+                <el-menu-item :index="'/' + submenu.path" v-for="submenu in menu.children" :key="submenu.id">
                   <template slot="title"><i :class="submenu.icon"></i>
                     <span>{{submenu.menuName}}</span>
                   </template>
@@ -34,7 +38,10 @@
           </el-menu>
         </el-aside>
         <!-- 右侧内容主体 -->
-        <el-main>Main</el-main>
+        <el-main>
+          <!--路由占位-->
+          <router-view></router-view>
+        </el-main>
       </el-container>
     </el-container>
 </template>
@@ -54,7 +61,7 @@ export default {
             {
               id: 104,
               menuName: '用户管理',
-              path: null,
+              path: 'users',
               order: 1,
               icon: 'el-icon-service',
               children: []
@@ -62,7 +69,7 @@ export default {
             {
               id: 105,
               menuName: '权限管理',
-              path: null,
+              path: 'roles',
               order: 2,
               icon: 'el-icon-bell',
               children: []
@@ -79,7 +86,7 @@ export default {
               {
                 id: 204,
                 menuName: '用户管理2',
-                path: null,
+                path: 'users2',
                 order: 1,
                 icon: 'el-icon-service',
                 children: []
@@ -87,7 +94,7 @@ export default {
               {
                 id: 205,
                 menuName: '权限管理2',
-                path: null,
+                path: 'roles2',
                 order: 2,
                 icon: 'el-icon-bell',
                 children: []
@@ -110,9 +117,11 @@ export default {
     logout () {
       alert('退出')
     },
+    // 动态获取菜单信息
     getMenuList () {
 
     },
+    // 折叠菜单
     toggleCollapse() {
       this.isCollapse = !this.isCollapse;
     }
