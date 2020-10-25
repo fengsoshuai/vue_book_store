@@ -11,21 +11,23 @@
       <!-- 页面主体区域 -->
       <el-container>
         <!-- 左侧区域 -->
-        <el-aside width="200px">
+        <el-aside :width="isCollapse ? '64px' : '200px'">
+          <!--菜单折叠-->
+          <div class="toggle-button" @click="toggleCollapse">|||</div>
           <el-menu
-            background-color="dodgerblue"
+            background-color="#2E2E2E"
             text-color="#fff"
-            active-text-color="#ccc">
+            active-text-color="#ccc" unique-opened :collapse="isCollapse" :collapse-transition="false">
             <!--1级菜单-->
-            <el-submenu index="1">
+            <el-submenu :index="menu.id + ''" v-for="menu in menuList" :key="menu.id">
               <!--1级菜单的模板-->
                 <template slot="title">
-                  <i class="el-icon-menu"></i>系统管理
+                  <i :class="menu.icon"></i><span>{{menu.menuName}}</span>
                 </template>
                 <!--2级菜单-->
-                <el-menu-item index="1-1-1">
-                  <template slot="title"><i class="el-icon-service"></i>
-                    <span>用户管理</span>
+                <el-menu-item :index="menu.id + '-' + submenu.id + ''" v-for="submenu in menu.children" :key="submenu.id">
+                  <template slot="title"><i :class="submenu.icon"></i>
+                    <span>{{submenu.menuName}}</span>
                   </template>
                 </el-menu-item>
               </el-submenu>
@@ -39,6 +41,68 @@
 
 <script>
 export default {
+  data() {
+    return {
+      menuList: [
+        {
+          id: 1,
+          menuName: '系统管理',
+          path: null,
+          order: 1,
+          icon: 'el-icon-menu',
+          children: [
+            {
+              id: 104,
+              menuName: '用户管理',
+              path: null,
+              order: 1,
+              icon: 'el-icon-service',
+              children: []
+            },
+            {
+              id: 105,
+              menuName: '权限管理',
+              path: null,
+              order: 2,
+              icon: 'el-icon-bell',
+              children: []
+            }
+          ]
+        },
+        {
+            id: 2,
+            menuName: '系统管理2',
+            path: null,
+            order: 1,
+            icon: 'el-icon-menu',
+            children: [
+              {
+                id: 204,
+                menuName: '用户管理2',
+                path: null,
+                order: 1,
+                icon: 'el-icon-service',
+                children: []
+              },
+              {
+                id: 205,
+                menuName: '权限管理2',
+                path: null,
+                order: 2,
+                icon: 'el-icon-bell',
+                children: []
+              }
+            ]
+        }
+      ],
+      meta: {
+        msg: '获取菜单列表成功',
+        status: 200
+      }
+      ,
+      isCollapse: false
+    }
+  },
   created () {
     this.getMenuList()
   },
@@ -48,6 +112,9 @@ export default {
     },
     getMenuList () {
 
+    },
+    toggleCollapse() {
+      this.isCollapse = !this.isCollapse;
     }
   }
 }
@@ -58,7 +125,7 @@ export default {
     width: 40px;
   }
   .el-header{
-    background-color: dodgerblue;
+    background-color: #2E2E2E;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -73,9 +140,23 @@ export default {
     }
   }
   .el-aside{
-    background-color: dodgerblue;
+    background-color: #424242;
+    .el-menu{
+      border-right: none;
+    }
   }
   .el-main{
-    background-color: antiquewhite;
+    background-color: #fff;
   }
+
+  .toggle-button{
+    background-color: gray;
+    font-size: 10px;
+    color: #fff;
+    line-height: 25px;
+    text-align: center;
+    letter-spacing: 0.3em;
+    cursor: pointer;
+  }
+
 </style>
