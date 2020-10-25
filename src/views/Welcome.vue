@@ -1,10 +1,16 @@
 <template>
-  <h1>Welcome</h1>
+  <div id = "welcome">
+    <el-calendar v-model="value"></el-calendar>
+  </div>
 </template>
 <script>
-    export default {
-        name: "Welcome"
+  export default {
+    data() {
+      return {
+        value: new Date()
+      }
     }
+  }
 </script>
 
 <style scoped>

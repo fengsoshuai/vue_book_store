@@ -17,11 +17,13 @@
           <el-menu
             background-color="#2E2E2E"
             text-color="#fff"
-            active-text-color="#ccc"
+            active-text-color="#547fcc"
             unique-opened
             :collapse="isCollapse"
             :collapse-transition="false"
-            router>
+            router
+            :default-active="activePath"
+          >
             <!--1级菜单-->
             <el-submenu :index="menu.id + ''" v-for="menu in menuList" :key="menu.id">
               <!--1级菜单的模板-->
@@ -29,7 +31,7 @@
                   <i :class="menu.icon"></i><span>{{menu.menuName}}</span>
                 </template>
                 <!--2级菜单-->
-                <el-menu-item :index="'/' + submenu.path" v-for="submenu in menu.children" :key="submenu.id">
+                <el-menu-item :index="'/' + submenu.path" v-for="submenu in menu.children" :key="submenu.id" @click="activeMenu('/' + submenu.path)">
                   <template slot="title"><i :class="submenu.icon"></i>
                     <span>{{submenu.menuName}}</span>
                   </template>
@@ -53,14 +55,14 @@ export default {
       menuList: [
         {
           id: 1,
-          menuName: '系统管理',
+          menuName: '用户管理',
           path: null,
           order: 1,
           icon: 'el-icon-menu',
           children: [
             {
               id: 104,
-              menuName: '用户管理',
+              menuName: '用户列表',
               path: 'users',
               order: 1,
               icon: 'el-icon-service',
@@ -78,23 +80,23 @@ export default {
         },
         {
             id: 2,
-            menuName: '系统管理2',
+            menuName: '系统管理',
             path: null,
             order: 1,
             icon: 'el-icon-menu',
             children: [
               {
                 id: 204,
-                menuName: '用户管理2',
-                path: 'users2',
+                menuName: '系统监控',
+                path: 'welcome',
                 order: 1,
                 icon: 'el-icon-service',
                 children: []
               },
               {
                 id: 205,
-                menuName: '权限管理2',
-                path: 'roles2',
+                menuName: '登陆日志',
+                path: '',
                 order: 2,
                 icon: 'el-icon-bell',
                 children: []
@@ -107,11 +109,13 @@ export default {
         status: 200
       }
       ,
-      isCollapse: false
+      isCollapse: false,
+      activePath: ''
     }
   },
   created () {
     this.getMenuList()
+    this.activePath = window.sessionStorage.getItem('activePath')
   },
   methods: {
     logout () {
@@ -124,6 +128,11 @@ export default {
     // 折叠菜单
     toggleCollapse() {
       this.isCollapse = !this.isCollapse;
+    },
+    // 链接激活状态
+    activeMenu(path) {
+      window.sessionStorage.setItem('activePath', path)
+      this.activePath = path
     }
   }
 }
@@ -157,7 +166,6 @@ export default {
   .el-main{
     background-color: #fff;
   }
-
   .toggle-button{
     background-color: gray;
     font-size: 10px;
@@ -167,5 +175,4 @@ export default {
     letter-spacing: 0.3em;
     cursor: pointer;
   }
-
 </style>
