@@ -167,7 +167,7 @@ export default {
     background-color: #fff;
   }
   .toggle-button{
-    background-color: gray;
+    background-color: #424242;
     font-size: 10px;
     color: #fff;
     line-height: 25px;

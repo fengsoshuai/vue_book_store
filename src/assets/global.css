@@ -13,3 +13,12 @@ body{
 #app, html{
     height: 100%;
 }
+
+.el-table{
+    margin-top: 15px;
+    font-size: 12px;
+}
+
+.el-pagination{
+    margin-top: 15px;
+}
