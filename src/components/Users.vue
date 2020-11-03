@@ -62,11 +62,39 @@
       </el-card>
 
       <!--添加用户对话框-->
-      <el-dialog title="添加用户" :visible.sync="addDialogVisible" width="50%" :before-close="handleClose">
-        <span>这是一段信息</span>
+      <el-dialog title="添加用户" :visible.sync="addDialogVisible" width="50%" @close="handleClose">
+        <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="70px">
+          <el-form-item label="登陆名" prop="username" required>
+            <el-input type="text" v-model="ruleForm.username" auto-complete="off" placeholder="请输入登陆账号"></el-input>
+          </el-form-item>
+          <el-form-item label="用户名" prop="name" required>
+            <el-input type="text" v-model="ruleForm.name" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="密码" prop="password" required>
+            <el-input type="password" v-model="ruleForm.password" auto-complete="off" placeholder="密码应为5-20个以字母开头、可带数字、“_”、“.”的字串"></el-input>
+          </el-form-item>
+          <el-form-item label="性别" prop="sex" required>
+            <el-radio-group v-model="ruleForm.sex">
+              <el-radio label="男"></el-radio>
+              <el-radio label="女"></el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="邮箱" prop="email" required>
+            <el-input type="email" v-model="ruleForm.email" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="手机" prop="phone" required>
+            <el-input type="text" v-model="ruleForm.phone" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="生日" required>
+            <el-form-item prop="birthday">
+              <el-date-picker type="date" placeholder="选择日期" v-model="ruleForm.birthday" style="width: 100%;"></el-date-picker>
+            </el-form-item>
+          </el-form-item>
+
+        </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="addDialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="addDialogVisible = false">确 定</el-button>
+          <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
         </span>
       </el-dialog>
     </div>
@@ -75,6 +103,33 @@
 <script>
 export default {
   data() {
+    // 校验邮箱
+    var checkEmail = (rule, value, callback) => {
+      const regEmail = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/
+      if(regEmail.test(value)){
+        return callback()
+      }
+      callback(new Error('请输入合法的邮箱'))
+    }
+    // 校验密码 （5-20个以字母开头、可带数字、“_”、“.”的字串）
+    var checkPassword = (rule, value, callback) => {
+      if(value.length > 20 || value.length < 6){
+          return callback(new Error('密码长度不合法（长度应为5-20）'))
+      }
+      const regPassword = /^[a-zA-Z]{1}([a-zA-Z0-9]|[._]){4,19}$/
+      if(regPassword.test(value)){
+        return callback()
+      }
+      callback(new Error('请输入严谨的密码（5-20个以字母开头、可带数字、“_”、“.”的字串）'))
+    }
+    // 校验手机号
+    var checkPhone = (rule, value ,callback) => {
+      const regPhone = /^[1][3,4,5,7,8,9][0-9]{9}$/;
+      if(regPhone.test(value)){
+        return callback()
+      }
+      callback(new Error('请输入合法的手机号'))
+    }
     return {
       // 获取用户列表
       queryInfo: {
@@ -128,7 +183,46 @@ export default {
         role: '超级管理员'
       }],
       total: 4,
-      addDialogVisible: false
+      addDialogVisible: false,
+      // 表单数据
+      ruleForm: {
+        username: '',
+        name: '',
+        password: '',
+        email: '',
+        birthday: '',
+        sex: '',
+        phone: ''
+      },
+      // 表单校验规则
+      rules: {
+        username: [
+          {required: true, message: '请输入登陆名', trigger: 'blur'},
+          {min: 3, max: 20, message: '用户名的长度在3 ~ 20个字符之间'}
+        ],
+        name: [
+          {required: true, message: '请输入用户名', trigger: 'blur'},
+          {min: 3, max: 20, message: '用户名的长度在3 ~ 20个字符之间'}
+        ],
+        password: [
+          {required: true, message: '请输入密码', trigger: 'blur'},
+          {validator: checkPassword, trigger: 'blur'}
+        ],
+        email: [
+          {required: true, message: '请输入邮箱', trigger: 'blur'},
+          {validator: checkEmail, trigger: 'blur'}
+        ],
+        phone: [
+          {required: true, message: '请输入手机号', trigger: 'blur'},
+          {validator: checkPhone, trigger: 'blur'}
+        ],
+        sex: [
+          {required: true, message: '请选择性别', trigger: 'blur'}
+        ],
+        birthday: [
+          {required: true, message: '请选择生日', trigger: 'blur'}
+        ]
+      }
     }
   },
   created() {
@@ -154,6 +248,30 @@ export default {
     // 更改用户状态
     async userStatuChange(userInfo){
       return this.$message.success("更新用户状态成功");
+    },
+    // 对话框关闭前
+    handleClose(){
+      this.$refs.ruleForm.resetFields()
+    },
+    // 提交表单
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          // 网路请求
+          /*const {data: res} =  this.$http.post('user', this.ruleForm)
+          if(res.meta.status != 201){
+            this.$message.error("添加用户失败");
+          }*/
+          this.$message.success("添加用户成功");
+          // 隐藏对话框
+          this.addDialogVisible = false
+          // 重新获取用户列表
+          this.getUserList()
+        } else {
+          console.log('校验信息未通过')
+          return false;
+        }
+      });
     }
   }
 }
