@@ -33,10 +33,10 @@
             <el-table-column prop="role" label="角色"></el-table-column>
             <el-table-column prop="address" label="地址"></el-table-column>
             <el-table-column label="操作" width="180">
-              <template>
+              <template slot-scope="scope">
                 <!--修改按钮-->
                 <el-tooltip class="item" effect="light" content="修改用户" placement="top" :enterable="false">
-                  <el-button type="primary" icon="el-icon-edit" size="mini"></el-button>
+                  <el-button type="primary" icon="el-icon-edit" size="mini" @click="openEditDialog(scope.row.id)"></el-button>
                 </el-tooltip>
                 <!--删除按钮-->
                 <el-tooltip class="item" effect="light" content="删除用户" placement="top" :enterable="false">
@@ -95,6 +95,14 @@
         <span slot="footer" class="dialog-footer">
           <el-button @click="addDialogVisible = false">取 消</el-button>
           <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
+        </span>
+      </el-dialog>
+
+      <el-dialog title="修改用户信息" :visible.sync="editDialogVisible" width="70%">
+        <span>这是一段信息</span>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="editDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="editDialogVisible = false">确 定</el-button>
         </span>
       </el-dialog>
     </div>
@@ -184,6 +192,7 @@ export default {
       }],
       total: 4,
       addDialogVisible: false,
+      editDialogVisible: false,
       // 表单数据
       ruleForm: {
         username: '',
@@ -272,6 +281,11 @@ export default {
           return false;
         }
       });
+    },
+    // 编辑用户信息
+    openEditDialog(id){
+      this.editDialogVisible = true;
+      
     }
   }
 }
