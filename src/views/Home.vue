@@ -70,8 +70,8 @@ export default {
             },
             {
               id: 105,
-              menuName: '权限管理',
-              path: 'roles',
+              menuName: '权限列表',
+              path: 'rights',
               order: 2,
               icon: 'el-icon-bell',
               children: []
